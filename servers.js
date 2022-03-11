@@ -3,6 +3,12 @@ const express = require('express');
 //변수 app 은 express 함수를 호출한다.
 const app = express();
 
+
+//express는 기본적으로 Get만 지원하기때문에 post로 전송된 값을 출력하기 위해선 
+//npm install body-parser 를 설치한후  아래 두줄을 추가해준다.
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+
 //server 변수에 app.listen(포트번호,콜백함수) 
 const server = app.listen(3000, () => {
     console.log("서버가 접속되었습니다");
@@ -25,12 +31,34 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {    // http://localhost:3000/about
-    res.send("about 페이지");  //response.send 로 페이지를 보낸다.
+    res.render('about.html')
 });
 
 
 app.get('/index', (req, res) => {    // http://localhost:3000/index
     res.render('index.html')  //페이지를 렌더해서 보여준다.
+});
+
+// app.post('/dodo', (req, res) => {    // post form 으로 전송했기때문에 post form으로 받는다.
+//     var name = req.body.name;  //name 변수에 request 요청! body 안에 있는 name 라는 name값을 가져와서 저장.
+
+//     res.send('입력된 값은  :' + name);
+
+// });
+
+app.post('/dodo', (req, res) => {    // post form 으로 전송했기때문에 post form으로 받는다.
+    var name = req.body.name;  //name 변수에 request 요청! body 안에 있는 name 라는 name값을 가져와서 저장.
+
+    //formOk.ejs 를 렌더 ejs 파일은 views 폴더 안에 작성해야한다. 
+    //{ 'data': name }, (err, html)   = { '넘길 이름', 값 }, (에러, 반환방식) 
+    res.render('formOk.ejs', { 'data': name }, (err, html) => {
+        if (err) {
+            console.log(err); //에러가 발생시 콘솔에 출력
+        }
+        res.end(html);  //html로 반환한다.
+    });
+
+
 });
 
 
